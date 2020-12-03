@@ -64,7 +64,8 @@ def create_gif(inputPath, outputPath, delay, finalDelay, loop):
 def gif(img_name, load_folder, save_folder):
     load_path = os.path.join(load_folder, img_name)
     print(load_path)
-    save_path = os.path.join(save_folder, img_name)
+
+    save_path = os.path.join(save_folder, "out.gif")
 
     config = json.loads(open("config.json").read())  # changed
     sg = cv2.imread(config["sunglasses"])
@@ -169,8 +170,9 @@ def gif(img_name, load_folder, save_folder):
         cv2.imwrite(p, output)
 
     print("[INFO] creating GIF...")
-    return create_gif(config["temp_dir"], save_path, config["delay"],
-                      config["final_delay"], config["loop"])
+    create_gif(config["temp_dir"], save_path, config["delay"],
+               config["final_delay"], config["loop"])
+    return save_path
 
 
 config = json.loads(open("config.json").read())

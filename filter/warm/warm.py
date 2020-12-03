@@ -24,8 +24,8 @@ def warmImage(image):
 def warm(img_name, load_folder, save_folder):
     load_path = os.path.join(load_folder, img_name)
     print(load_path)
-    save_path = os.path.join(save_folder, img_name)
+    save_path = os.path.join(save_folder,'warm', img_name)
     img = cv2.imread(load_path)
     res = warmImage(img)
-    cv2.inwrite(save_path, res)
+    cv2.imwrite(save_path, res)
     return save_path

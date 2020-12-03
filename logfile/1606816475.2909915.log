@@ -1,0 +1,3 @@
+2020-12-01 09:54:35.302 WARNING _internal - _log:  * Debugger is active!
+2020-12-01 09:54:35.303 INFO _internal - _log:  * Debugger PIN: 526-560-987
+2020-12-01 10:05:20.699 INFO _internal - _log:  * Detected change in '/backup/PTS_clone_demo/app.py', reloading

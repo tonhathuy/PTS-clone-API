@@ -1,13 +1,14 @@
 SERVICE:
     SERVICE_IP: "0.0.0.0"
-    SERVICE_PORT: 5000
+    SERVICE_PORT: 5003
     TASK1_PORT: 5001
     TASK2_PORT: 5002
     TASK3_PORT: 5003
     LOG_PATH: "logfile"
     UPLOAD_DIR: "upload"
     RESULT_DIR: "static/result"
-
+    SERVICE_URL: "http://service.mmlab.uit.edu.vn/receipt/task3/"
+    MODEL_PATH_CARTOONIZER: "filter/cartoonizer/saved_models"
 
     # TASK1_URL: 'http://192.168.20.151:5001/predict'
     # TASK1_URL: 'http://service.mmlab.uit.edu.vn/receipt/task1/predict'

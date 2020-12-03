@@ -15,6 +15,16 @@ import time
 
 from filter.gray.gray import gray
 from filter.sketch.sketch_potrait import sketch
+from filter.bw_pencil.bw_pencil import bw_pencil
+from filter.water_color.water_color import water_color
+from filter.oil_painting.oil_painting import oil_painting
+from filter.cold.cold import cold
+from filter.warm.warm import warm
+# from filter.cartoonizer.cartoonizer import cartoonizer
+import tensorflow as tf 
+from filter.cartoonizer import network
+from filter.cartoonizer import guided_filter
+
 from time import gmtime, strftime
 
 from flask import Flask, render_template, Response, request, jsonify, send_from_directory, redirect, url_for
@@ -42,6 +52,8 @@ UPLOAD = cfg.SERVICE.UPLOAD_DIR
 RESULT = cfg.SERVICE.RESULT_DIR
 HOST = cfg.SERVICE.SERVICE_IP
 PORT = cfg.SERVICE.SERVICE_PORT
+HOST_URL = cfg.SERVICE.SERVICE_URL
+MODEL_PATH_CARTOONIZER = cfg.SERVICE.MODEL_PATH_CARTOONIZER
 
 if not os.path.exists(LOG_PATH):
     os.mkdir(LOG_PATH)
@@ -53,7 +65,51 @@ logging.getLogger("").addHandler(console)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder='static')
-app.config["CLIENT_IMAGES"] = "static/result/gray"
+#app.config["CLIENT_IMAGES"] = "static/result/gray"
+
+# -------------------CARTOONIZER CODE------------------------------------------ 
+input_photo = tf.placeholder(tf.float32, [1, None, None, 3])
+network_out = network.unet_generator(input_photo)
+final_out = guided_filter.guided_filter(input_photo, network_out, r=1, eps=5e-3)
+
+all_vars = tf.trainable_variables()
+gene_vars = [var for var in all_vars if "generator" in var.name]
+saver = tf.train.Saver(var_list=gene_vars)
+
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
+
+sess.run(tf.global_variables_initializer())
+saver.restore(sess, tf.train.latest_checkpoint(MODEL_PATH_CARTOONIZER))
+
+def resize_crop(image):
+    h, w, c = np.shape(image)
+    if min(h, w) > 720:
+        if h > w:
+            h, w = int(720*h/w), 720
+        else:
+            h, w = 720, int(720*w/h)
+    image = cv2.resize(image, (w, h),
+                       interpolation=cv2.INTER_AREA)
+    h, w = (h//8)*8, (w//8)*8
+    image = image[:h, :w, :]
+    return image
+
+def cartoonizer(img_name, load_folder, save_folder):
+    name_list = os.listdir(load_folder)
+    load_path = os.path.join(load_folder, img_name)
+    print(load_path)
+    save_path = os.path.join(save_folder, 'cartoonizer',img_name)
+    image = cv2.imread(load_path)
+    image = resize_crop(image)
+    batch_image = image.astype(np.float32) / 127.5 - 1
+    batch_image = np.expand_dims(batch_image, axis=0)
+    output = sess.run(final_out, feed_dict={input_photo: batch_image})
+    output = (np.squeeze(output) + 1) * 127.5
+    output = np.clip(output, 0, 255).astype(np.uint8)
+    cv2.imwrite(save_path, output)
+    return save_path
 
 
 @app.route('/send', methods=['POST'])
@@ -92,10 +148,13 @@ def result():
         print(request.json['filter-id'])
         img_name = request.json['image-name']
         filter_id = request.json['filter-id']
-        list_filter = [gray, sketch]
-        output = list_filter[request.json['filter-id']](img_name, UPLOAD, RESULT)
-        output_URL =HOST +':' + str(PORT) +'/' + output
-        return str(output_URL)
+        list_filter = [gray, sketch,bw_pencil,water_color,oil_painting,cold,warm,cartoonizer]
+        output_URLs = []
+        for i in filter_id:
+            output = list_filter[i](img_name, UPLOAD, RESULT)
+            output_URL =HOST_URL + output
+            output_URLs.append(output_URL)
+        return str(output_URLs)
 
 # @app.route("/static/result/<filter_name>/<image_name>")
 # def get_image_v2(image_name, filter_name):

@@ -10,3 +10,4 @@ gdown
 lmdb
 pillow
 pyyaml
+opencv-contrib-python

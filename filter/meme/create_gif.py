@@ -64,8 +64,8 @@ def create_gif(inputPath, outputPath, delay, finalDelay, loop):
 def gif(img_name, load_folder, save_folder):
     load_path = os.path.join(load_folder, img_name)
     print(load_path)
-
-    save_path = os.path.join(save_folder, "out.gif")
+    img_gif = img_name.split('.')
+    save_path = os.path.join(save_folder, f"{img_gif[0]}.gif")
 
     config = json.loads(open("config.json").read())  # changed
     sg = cv2.imread(config["sunglasses"])

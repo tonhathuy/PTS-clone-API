@@ -7,10 +7,5 @@ SERVICE:
     LOG_PATH: "logfile"
     UPLOAD_DIR: "upload"
     RESULT_DIR: "static/result"
-    SERVICE_URL: "http://service.mmlab.uit.edu.vn/receipt/task3/"
+    SERVICE_URL: ""
     MODEL_PATH_CARTOONIZER: "filter/cartoonizer/saved_models"
-
-    # TASK1_URL: 'http://192.168.20.151:5001/predict'
-    # TASK1_URL: 'http://service.mmlab.uit.edu.vn/receipt/task1/predict'
-    # TASK2_URL: 'http://service.mmlab.uit.edu.vn/receipt/task2/predict'
-    # TASK3_URL: 'http://192.168.20.151:5003/predict'

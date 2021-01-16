@@ -3,7 +3,7 @@ PTS filter clone API
 ## Requirements
 - docker 19.03 / 18.09
 - GPU NVIDIA 
-- ubuntu > 18.04
+- ubuntu 18.04+
 ## Installation
 ### 1. Clone this repo
 ```bash

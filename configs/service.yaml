@@ -1,9 +1,6 @@
 SERVICE:
     SERVICE_IP: "0.0.0.0"
     SERVICE_PORT: 5003
-    TASK1_PORT: 5001
-    TASK2_PORT: 5002
-    TASK3_PORT: 5003
     LOG_PATH: "logfile"
     UPLOAD_DIR: "upload"
     RESULT_DIR: "static/result"
